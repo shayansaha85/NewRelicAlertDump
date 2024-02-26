@@ -1,10 +1,2 @@
 /NewRelicAlertDumping
-secret.cfg
-policies_dump.json
-Tier1_EPR.csv
-tier1apps.csv
-app.json
-ALERT_DUMP.xlsx
-EPR_Without_Policies.txt
-app.py
-test.py
+/archive
