@@ -1,0 +1,7 @@
+/NewRelicAlertDumping
+secret.cfg
+policies_dump.json
+Tier1_EPR.csv
+tier1apps.csv
+app.json
+ALERT_DUMP.xlsx
