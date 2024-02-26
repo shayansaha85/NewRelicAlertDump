@@ -2,8 +2,8 @@ import configparser
 import requests
 import pandas as pd
 
-df = pd.read_csv("tier_1_apps_epr.csv")
-epr_id_list = list(df['epr'])
+df = pd.read_csv("Tier1_EPR.csv")
+epr_id_list = list(df['EPR_ID'])
 policies_dump = {}
 
 def connect_nr():
@@ -40,4 +40,9 @@ for epr_id in epr_id_list :
     for x in l:
         policies_dump[str(epr_id)].append(x)
 
-print(policies_dump)
+
+
+
+for eprid in epr_id_list:
+    if len(policies_dump[str(eprid)]) == 0:
+        print(eprid)

@@ -3,6 +3,7 @@ import requests
 import configparser
 import re
 
+policiy_response = {}
 
 def connect_nr():
     config = configparser.ConfigParser()
@@ -30,7 +31,9 @@ def fetch_alert_policies_for_application(epr):
     }
     response = requests.get(alert_policies_endpoint, headers=headers)
     policy_details = response.json()["policies"]
+    policiy_response["message"] = policy_details
     policy_ids = []
+ 
 
     for policy in policy_details:
         if policy["name"].split(".")[0].strip() == str(epr):
@@ -42,18 +45,26 @@ for epr_id in epr_id_list :
     l = fetch_alert_policies_for_application(epr_id)
     for x in l:
         policies_dump[str(epr_id)].append(x)
-
 # print(policies_dump)
 
 def fetch_event(query):
     query = query.lower()
     pattern = r'from\s+(\w+)'
-    match = re.search(pattern, query)
+    match = re.search(pattern, query.replace("`", ""))
     if match:
         word_after_from = match.group(1)
         return word_after_from
     else:
         return "No event"
+
+def fetch_policy_name(policyID, epr):
+    policy_details = policiy_response["message"]
+    policy_name = []
+    for policy in policy_details:
+        if str(policy["name"].split(".")[0].strip()) == str(epr) and str(policy["id"]) == policyID:
+            policy_name.append(policy["name"])
+    return policy_name[0]
+
 
 def fetch_conditions(policy_id, epr_id):
     url = f'{endpointNRQLConditions}?policy_id={str(policy_id)}'
@@ -81,7 +92,7 @@ def fetch_conditions(policy_id, epr_id):
         row_data["EPR ID"].append(str(epr_id))
         row_data["Policy ID"].append(str(policy_id))
         row_data["Alert Condition"].append(con["name"])
-        row_data['Policy'].append("210135.PRP-PRD")
+        row_data['Policy'].append(fetch_policy_name(str(policy_id), str(epr_id)))
         row_data["Query"].append(con["nrql"]["query"])
         row_data["Event"].append(str(fetch_event(con["nrql"]["query"])))
         row_data["Type"].append(con["type"])
